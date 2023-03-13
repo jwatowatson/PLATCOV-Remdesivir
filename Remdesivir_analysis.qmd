@@ -32,6 +32,7 @@ RUN_MODELS = F
 
 my_probs = c(0.025, 0.1, .5, .9, .975)
 source('functions.R')
+trt_colors = get_trt_colors()
 ```
 
 ## Load data
@@ -86,17 +87,17 @@ platcov_dat = platcov_dat %>% group_by(ID, Timepoint_ID) %>%
          Site = as.factor(Site),
          Trt = factor(Trt, levels=c(ref_arm, trts)),
          Vaccinated = as.factor(ifelse(N_dose>0,'Yes','No')),
-         Variant = as.factor(Variant)) %>%
+         Variant = factor(Variant, levels=c('Delta','BA.1','BA.2','BA.5'))) %>%
   ungroup() %>%
-        mutate(trt_color = brewer.pal(name = 'Dark2',8)[c(7,3)][as.numeric(Trt)]) 
+  mutate(trt_color = 
+           as.character(plyr::mapvalues(Trt,
+                                   from = names(trt_colors),
+                                   to = trt_colors))) 
 
 Baseline_data = platcov_dat %>% ungroup() %>% 
   distinct(ID, .keep_all = T) %>%
   filter(Timepoint_ID==0) %>% 
-  mutate(Baseline.viral.load = daily_VL,
-         trt_col = plyr::mapvalues(Trt,
-                                   from = c(ref_arm, trts),
-                                   to = brewer.pal(name = 'Set2',8)[1:length(c(ref_arm, trts))]))
+  mutate(Baseline.viral.load = daily_VL)
 
 
 tab.ff <- Baseline_data %>% filter(mITT) %>%
@@ -117,7 +118,18 @@ tab.ff <- Baseline_data %>% filter(mITT) %>%
   ) %>%
   kable_classic(full_width = FALSE)
 tab.ff
-save_kable(tab.ff,file = 'Remdesivir_analysis_baseline_characteristics.pdf')
+```
+
+```{r remdesivir_variants}
+par(las=1, family='serif', cex.lab=1.3, cex.axis=1.3)
+plot(Baseline_data$Rand_date, 1:nrow(Baseline_data),
+     xlab='Randomisation date', ylab = 'Patient number',
+     col = brewer.pal(name = 'Set2',n=8)[as.numeric(Baseline_data$Variant)],
+     panel.first=grid(),
+     pch = ifelse(Baseline_data$Variant_Imputed==0,16,1))
+legend('bottomright', legend = levels(Baseline_data$Variant), 
+       pch=16,inset = 0.03,
+       col =  brewer.pal(name = 'Set2',n=8)[1:4])
 ```
 
 ## Fit models
@@ -147,7 +159,7 @@ writeLines(sprintf('Analysis dataset contains %s patients and %s datapoints (%s 
                    round(100*mean(platcov_dat_analysis$CT_NS<40))))
 
 covs_base = c('Variant','Site')
-covs_full=c(covs_base, 'Age_scaled','Symptom_onset')
+covs_full=c(covs_base, 'Age_scaled','Symptom_onset','N_dose')
 stan_inputs = 
   make_stan_inputs(input_data_fit = platcov_dat_analysis,
                    int_covs_base = covs_base,
@@ -162,8 +174,8 @@ stan_inputs =
 all_mods = list.files('Stan_models',full.names = TRUE,pattern = '*stan')
 
 model_settings = expand.grid(mod = all_mods[2:3],
-                             prior = 1,
-                             cov_matrices = 1)
+                             prior = 1:2,
+                             cov_matrices = 1:2)
 
 model_settings$Niter = 4000
 model_settings$Nwarmup = 2000
@@ -205,7 +217,7 @@ main_mod = which(model_settings$prior==1&
                    model_settings$cov_matrices==1&
                    model_settings$mod==all_mods[2])
 
-model_cols = brewer.pal(n = nrow(model_settings), name = 'Dark2')
+model_cols = brewer.pal(n = nrow(model_settings), name = 'Paired')
 names(model_cols) = paste('model', 1:nrow(model_settings))
 ```
 
@@ -226,11 +238,11 @@ plot_serial_data(xx = platcov_dat_analysis)
 plot_effect_estimates(effect_ests = effect_ests,
                       plot_models = 1:length(ff),
                       study_threshold = study_threshold,
-                      mod_cols = brewer.pal(n = 8, 'Dark2')[1:length(ff)],
+                      mod_cols = model_cols[1:length(ff)],
                       my_pch = 15)
 # title(intervention)
-legend('right',pch=15:16,legend = c('Linear','Non-linear'),
-       col = model_cols,inset=0.03, cex=1.5)
+legend('right',pch=16:17,legend = c('Linear','Non-linear'),
+       col = model_cols,lwd=2,inset=0.03, cex=1.5)
 
 load(ff[main_mod])
 round(100*(exp(quantile(rstan::extract(out, pars = 'trt_effect')$trt_effect, probs = my_probs))-1))
@@ -238,8 +250,8 @@ round(100*(exp(quantile(rstan::extract(out, pars = 'trt_effect')$trt_effect, pro
 
 ```{r slopes_plot}
 par(las=1, cex.lab=1.5, cex.axis=1.5)
-trt_cols = rev(unique(platcov_dat_analysis$trt_color))
-names(trt_cols) = unique(platcov_dat_analysis$Trt)
+trt_cols = unique(platcov_dat_analysis$trt_color)
+names(trt_cols) = platcov_dat_analysis$Trt[!duplicated(platcov_dat_analysis$trt_color)]
 xx=make_slopes_plot(stan_out = out, 
                     analysis_data_stan = stan_inputs$analysis_data_stan,
                     ID_map = stan_inputs$ID_map,

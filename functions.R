@@ -57,7 +57,7 @@ plot_baseline_data = function(input_data){
   
   hist(bvl$log10_viral_load,
        breaks = seq(1,9,by=.5),
-       xlab='Baseline viral load (RNA copies per mL)',
+       xlab='Baseline viral load (SARS CoV2 genomes/mL)',
        ylab ='Number of patients',xlim=c(1,9),
        main='', xaxt ='n')
   axis(1, at = c(2,4,6,8), labels = c(expression(10^2),
@@ -80,7 +80,7 @@ plot_serial_data = function(xx, xlims=c(0,7)){
   
   par(las=1)
   plot(summary_VL_data$Timepoint_ID, summary_VL_data$daily_VL,
-       ylab = 'RNA copies per mL', panel.first=grid(),
+       ylab = 'SARS CoV2 genomes/mL', panel.first=grid(),
        xlab = 'Time since randomization (days)',
        xlim = xlims, yaxt='n',type='n',
        ylim = c(0.7, 8))
@@ -268,7 +268,7 @@ plot_data_model_fits =
            panel.first=grid(), xlim=c(0,7),
            ylim = range(analysis_data_stan$log_10_vl))
       # if(counter %% sqrt(K_plots) == 1){
-      #   mtext(text = 'RNA copies per mL',side = 2,
+      #   mtext(text = 'SARS CoV2 genomes/mL',side = 2,
       #         line = 3,las = 3)
       # }
       axis(1, at = c(0,3,7))
@@ -567,6 +567,45 @@ get_itt_population = function(){
   
   return(xx)
 }
+
+
+
+get_trt_colors = function(plot_cols=F){
+  trt_cols = array(dim = 11)
+  names(trt_cols) = 
+    c("Ivermectin",
+      "Regeneron",
+      'No study drug',
+      "Remdesivir",
+      "Favipiravir",
+      "Nitazoxanide",           
+      "Fluoxetine",
+      "Molnupiravir",
+      "Nirmatrelvir + Ritonavir",
+      "Evusheld",
+      'Ensitrelvir')
+  trt_cols['No study drug'] = viridis::viridis(n = 10)[8]
+  trt_cols['Fluoxetine'] = viridis::viridis(n = 10)[5]
+  trt_cols['Nitazoxanide'] = viridis::magma(n = 10)[8]
+  trt_cols['Evusheld'] = viridis::magma(n = 10)[1]
+  trt_cols['Favipiravir'] = viridis::plasma(n = 100)[92]
+  trt_cols['Ivermectin'] = viridis::plasma(n = 10)[4]
+  trt_cols['Nirmatrelvir + Ritonavir'] = viridis::plasma(n = 10)[1]
+  trt_cols['Regeneron'] = viridis::inferno(n = 10)[5]
+  trt_cols['Molnupiravir'] = viridis::inferno(n = 10)[7]
+  trt_cols['Remdesivir'] = RColorBrewer::brewer.pal('Dark2',n=8)[8]
+  trt_cols['Ensitrelvir'] = RColorBrewer::brewer.pal('Set1',n=8)[1]
+  
+  if(plot_cols){
+    my_labels = gsub(pattern = ' + Ritonavir',replacement = '',fixed = T,x = names(trt_cols))
+    plot(1:length(trt_cols), col=trt_cols, pch=16, cex=5, xlim = c(1,15),
+         xaxt='n',yaxt='n',xlab='',ylab='',bty='n')
+    text(x = 1:length(trt_cols)+2.5, y= 1:length(trt_cols), labels = my_labels)
+  }
+  return(trt_cols)
+}
+
+
 
 checkStrict(make_stan_inputs)
 checkStrict(plot_serial_data)

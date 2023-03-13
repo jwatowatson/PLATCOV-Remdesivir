@@ -280,6 +280,9 @@ Intervention    FALSE TRUE
 <section id="baseline-characteristics" class="level2">
 <h2 class="anchored" data-anchor-id="baseline-characteristics">Baseline characteristics</h2>
 <div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>The following `from` values were not present in `x`: Ivermectin, Regeneron, Favipiravir, Nitazoxanide, Fluoxetine, Molnupiravir, Nirmatrelvir + Ritonavir, Evusheld, Ensitrelvir</code></pre>
+</div>
 <div class="cell-output-display">
 
 <table class=" lightable-classic" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;">
@@ -362,22 +365,6 @@ Intervention    FALSE TRUE
   <tr>
    <td style="text-align:left;"> Variant </td>
    <td style="text-align:right;"> 131 (100.0) </td>
-   <td style="text-align:left;"> BA.1 </td>
-   <td style="text-align:right;"> 13 (20.3) </td>
-   <td style="text-align:right;"> 20 (29.9) </td>
-   <td style="text-align:right;"> 33 (25.2) </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;">  </td>
-   <td style="text-align:right;">  </td>
-   <td style="text-align:left;"> BA.2 </td>
-   <td style="text-align:right;"> 40 (62.5) </td>
-   <td style="text-align:right;"> 37 (55.2) </td>
-   <td style="text-align:right;"> 77 (58.8) </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;">  </td>
-   <td style="text-align:right;">  </td>
    <td style="text-align:left;"> Delta </td>
    <td style="text-align:right;"> 10 (15.6) </td>
    <td style="text-align:right;"> 10 (14.9) </td>
@@ -386,10 +373,26 @@ Intervention    FALSE TRUE
   <tr>
    <td style="text-align:left;">  </td>
    <td style="text-align:right;">  </td>
+   <td style="text-align:left;"> BA.1 </td>
+   <td style="text-align:right;"> 15 (23.4) </td>
+   <td style="text-align:right;"> 19 (28.4) </td>
+   <td style="text-align:right;"> 34 (26.0) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:right;">  </td>
+   <td style="text-align:left;"> BA.2 </td>
+   <td style="text-align:right;"> 37 (57.8) </td>
+   <td style="text-align:right;"> 38 (56.7) </td>
+   <td style="text-align:right;"> 75 (57.3) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:right;">  </td>
    <td style="text-align:left;"> BA.5 </td>
-   <td style="text-align:right;"> 1 (1.6) </td>
+   <td style="text-align:right;"> 2 (3.1) </td>
    <td style="text-align:right;"> 0 (0.0) </td>
-   <td style="text-align:right;"> 1 (0.8) </td>
+   <td style="text-align:right;"> 2 (1.5) </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Symptom_onset </td>
@@ -419,8 +422,14 @@ Intervention    FALSE TRUE
 </table>
 
 </div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Note that HTML color may not be displayed on PDF properly.</code></pre>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Remdesivir_analysis_files/figure-html/remdesivir_variants-1.png" class="img-fluid figure-img" width="2400"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -449,9 +458,7 @@ check stan data formatting:</code></pre>
 </div>
 <p>main model selection</p>
 <div class="cell">
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in brewer.pal(n = nrow(model_settings), name = "Dark2"): minimal value for n is 3, returning requested palette with 3 different levels</code></pre>
-</div>
+
 </div>
 </section>
 <section id="plot-treatment-effect" class="level2">
@@ -473,13 +480,13 @@ check stan data formatting:</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code> 2.5%   10%   50%   90% 97.5% 
-   18    25    43    66    81 </code></pre>
+   17    26    44    63    77 </code></pre>
 </div>
 </div>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>The model estimated population mean clearance half-life is 24.8 (95% CI 18.8-32.7)
-The model estimated population mean beta value is -0.3 (95% CI -0.38 to -0.22)</code></pre>
+<pre><code>The model estimated population mean clearance half-life is 25.3 (95% CI 19.2-32.7)
+The model estimated population mean beta value is -0.29 (95% CI -0.38 to -0.22)</code></pre>
 </div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -489,9 +496,9 @@ The model estimated population mean beta value is -0.3 (95% CI -0.38 to -0.22)</
 </div>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>In No study drug the median clearance half life was 18.3 (range 3.6 to 46.7)
+<pre><code>In No study drug the median clearance half life was 18.2 (range 3.5 to 47)
 In No study drug the mean beta -0.46 (range -0.59 to -0.32)
-In Remdesivir the median clearance half life was 12.9 (range 4.8 to 50.2)
+In Remdesivir the median clearance half life was 12.8 (range 4.8 to 51.5)
 In Remdesivir the mean beta -0.64 (range -0.81 to -0.48)</code></pre>
 </div>
 </div>
