@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.269">
+<meta name="generator" content="quarto-1.3.353">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -18,9 +18,10 @@ div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
   width: 0.8em;
-  margin: 0 0.8em 0.2em -1.6em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
@@ -47,43 +48,13 @@ pre.numberSource code > span > a:first-child::before
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
     padding: 0 4px; width: 4em;
-    color: #aaaaaa;
   }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
 div.sourceCode
   {   }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { color: #008000; } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { color: #008000; font-weight: bold; } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -157,10 +128,10 @@ rstan_options(auto_write = TRUE)</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-✔ tibble  3.1.8      ✔ dplyr   1.0.10
-✔ tidyr   1.2.1      ✔ stringr 1.5.0 
-✔ readr   2.1.3      ✔ forcats 0.5.2 
-✔ purrr   0.3.5      
+✔ tibble  3.2.1     ✔ dplyr   1.1.2
+✔ tidyr   1.2.1     ✔ stringr 1.5.0
+✔ readr   2.1.3     ✔ forcats 0.5.2
+✔ purrr   0.3.5     
 ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ✖ tidyr::extract() masks rstan::extract()
 ✖ dplyr::filter()  masks stats::filter()
@@ -171,7 +142,18 @@ Attaching package: 'kableExtra'
 
 The following object is masked from 'package:dplyr':
 
-    group_rows</code></pre>
+    group_rows
+
+
+Loading required package: ggpubr
+
+
+Attaching package: 'survminer'
+
+
+The following object is masked from 'package:survival':
+
+    myeloma</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>               _                           
@@ -193,7 +175,7 @@ nickname       Innocent and Trusting       </code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>R version 4.2.2 (2022-10-31)
 Platform: aarch64-apple-darwin20 (64-bit)
-Running under: macOS Ventura 13.1
+Running under: macOS Ventura 13.2.1
 
 Matrix products: default
 BLAS:   /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/lib/libRblas.0.dylib
@@ -206,40 +188,44 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] RColorBrewer_1.1-3   finalfit_1.0.6       kableExtra_1.3.4    
- [4] forcats_0.5.2        stringr_1.5.0        dplyr_1.0.10        
- [7] purrr_0.3.5          readr_2.1.3          tidyr_1.2.1         
-[10] tibble_3.1.8         tidyverse_1.3.2      rstan_2.21.7        
-[13] ggplot2_3.4.0        StanHeaders_2.21.0-7
+ [1] survminer_0.4.9      ggpubr_0.5.0         survival_3.4-0      
+ [4] RColorBrewer_1.1-3   finalfit_1.0.6       kableExtra_1.3.4    
+ [7] forcats_0.5.2        stringr_1.5.0        dplyr_1.1.2         
+[10] purrr_0.3.5          readr_2.1.3          tidyr_1.2.1         
+[13] tibble_3.2.1         tidyverse_1.3.2      rstan_2.21.7        
+[16] ggplot2_3.4.0        StanHeaders_2.21.0-7
 
 loaded via a namespace (and not attached):
- [1] httr_1.4.4          splines_4.2.2       viridisLite_0.4.1  
- [4] jsonlite_1.8.4      modelr_0.1.10       RcppParallel_5.1.5 
- [7] assertthat_0.2.1    stats4_4.2.2        googlesheets4_1.0.1
-[10] cellranger_1.1.0    yaml_2.3.6          lattice_0.20-45    
-[13] pillar_1.8.1        backports_1.4.1     glue_1.6.2         
-[16] digest_0.6.31       rvest_1.0.3         colorspace_2.0-3   
-[19] Matrix_1.5-1        htmltools_0.5.4     pkgconfig_2.0.3    
-[22] broom_1.0.2         haven_2.5.1         webshot_0.5.4      
-[25] scales_1.2.1        processx_3.8.0      svglite_2.1.1      
-[28] tzdb_0.3.0          timechange_0.1.1    googledrive_2.0.0  
-[31] generics_0.1.3      ellipsis_0.3.2      withr_2.5.0        
-[34] cli_3.4.1           survival_3.4-0      magrittr_2.0.3     
-[37] crayon_1.5.2        readxl_1.4.1        evaluate_0.19      
-[40] ps_1.7.2            mice_3.15.0         fs_1.5.2           
-[43] fansi_1.0.3         xml2_1.3.3          pkgbuild_1.4.0     
-[46] tools_4.2.2         loo_2.5.1           prettyunits_1.1.1  
-[49] hms_1.1.2           gargle_1.2.1        lifecycle_1.0.3    
-[52] matrixStats_0.63.0  munsell_0.5.0       reprex_2.0.2       
-[55] callr_3.7.3         compiler_4.2.2      systemfonts_1.0.4  
-[58] rlang_1.0.6         grid_4.2.2          rstudioapi_0.14    
-[61] htmlwidgets_1.6.0   rmarkdown_2.19      boot_1.3-28        
-[64] gtable_0.3.1        codetools_0.2-18    inline_0.3.19      
-[67] DBI_1.1.3           R6_2.5.1            gridExtra_2.3      
-[70] lubridate_1.9.0     knitr_1.41          fastmap_1.1.0      
-[73] utf8_1.2.2          stringi_1.7.8       parallel_4.2.2     
-[76] Rcpp_1.0.9          vctrs_0.5.1         dbplyr_2.2.1       
-[79] tidyselect_1.2.0    xfun_0.35          </code></pre>
+ [1] matrixStats_0.63.0  fs_1.5.2            lubridate_1.9.0    
+ [4] webshot_0.5.4       httr_1.4.4          tools_4.2.2        
+ [7] backports_1.4.1     utf8_1.2.3          R6_2.5.1           
+[10] DBI_1.1.3           colorspace_2.0-3    withr_2.5.0        
+[13] tidyselect_1.2.0    gridExtra_2.3       prettyunits_1.1.1  
+[16] processx_3.8.0      compiler_4.2.2      cli_3.6.1          
+[19] rvest_1.0.3         mice_3.15.0         xml2_1.3.3         
+[22] scales_1.2.1        survMisc_0.5.6      callr_3.7.3        
+[25] systemfonts_1.0.4   digest_0.6.31       rmarkdown_2.19     
+[28] svglite_2.1.1       pkgconfig_2.0.3     htmltools_0.5.4    
+[31] dbplyr_2.2.1        fastmap_1.1.0       htmlwidgets_1.6.0  
+[34] rlang_1.1.0         readxl_1.4.1        rstudioapi_0.14    
+[37] generics_0.1.3      zoo_1.8-11          jsonlite_1.8.4     
+[40] car_3.1-1           googlesheets4_1.0.1 inline_0.3.19      
+[43] magrittr_2.0.3      loo_2.5.1           Matrix_1.5-1       
+[46] Rcpp_1.0.10         munsell_0.5.0       fansi_1.0.4        
+[49] abind_1.4-5         lifecycle_1.0.3     stringi_1.7.8      
+[52] yaml_2.3.6          carData_3.0-5       pkgbuild_1.4.0     
+[55] grid_4.2.2          parallel_4.2.2      crayon_1.5.2       
+[58] lattice_0.20-45     haven_2.5.1         splines_4.2.2      
+[61] hms_1.1.2           knitr_1.41          ps_1.7.2           
+[64] pillar_1.9.0        boot_1.3-28         ggsignif_0.6.4     
+[67] codetools_0.2-18    stats4_4.2.2        reprex_2.0.2       
+[70] glue_1.6.2          evaluate_0.19       data.table_1.14.6  
+[73] RcppParallel_5.1.5  modelr_0.1.10       vctrs_0.6.2        
+[76] tzdb_0.3.0          cellranger_1.1.0    gtable_0.3.1       
+[79] km.ci_0.5-6         assertthat_0.2.1    xfun_0.35          
+[82] xtable_1.8-4        broom_1.0.2         rstatix_0.7.1      
+[85] googledrive_2.0.0   viridisLite_0.4.1   gargle_1.2.1       
+[88] KMsurv_0.1-5        timechange_0.1.1    ellipsis_0.3.2     </code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning in checkStrict(plot_serial_data): global variables used: daily_VL, ID,
@@ -253,9 +239,6 @@ Time</code></pre>
 <section id="load-data" class="level2">
 <h2 class="anchored" data-anchor-id="load-data">Load data</h2>
 <p>Set up analysis</p>
-<div class="cell">
-
-</div>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>Missing patients in Remdesivir arm:
@@ -281,145 +264,145 @@ Intervention    FALSE TRUE
 <h2 class="anchored" data-anchor-id="baseline-characteristics">Baseline characteristics</h2>
 <div class="cell">
 <div class="cell-output cell-output-stderr">
-<pre><code>The following `from` values were not present in `x`: Ivermectin, Regeneron, Favipiravir, Nitazoxanide, Fluoxetine, Molnupiravir, Nirmatrelvir + Ritonavir, Evusheld, Ensitrelvir</code></pre>
+<pre><code>The following `from` values were not present in `x`: Ivermectin, Regeneron, Favipiravir, Nitazoxanide, Fluoxetine, Molnupiravir, Nirmatrelvir + Ritonavir, Evusheld, Ensitrelvir, Nirmatrelvir</code></pre>
 </div>
 <div class="cell-output-display">
-
-<table class=" lightable-classic" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;">
+<table class="lightable-classic table table-sm table-striped small" data-quarto-postprocess="true">
 <caption>Baseline characteristics</caption>
- <thead>
-  <tr>
-   <th style="text-align:left;"> Dependent: Trt </th>
-   <th style="text-align:right;"> Total N </th>
-   <th style="text-align:left;">   </th>
-   <th style="text-align:right;"> No study drug </th>
-   <th style="text-align:right;"> Remdesivir </th>
-   <th style="text-align:right;"> Total </th>
-  </tr>
- </thead>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Dependent: Trt</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Total N</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">No study drug</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Remdesivir</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Total</th>
+</tr>
+</thead>
 <tbody>
-  <tr>
-   <td style="text-align:left;"> Site </td>
-   <td style="text-align:right;"> 131 (100.0) </td>
-   <td style="text-align:left;"> br003 </td>
-   <td style="text-align:right;"> 7 (10.9) </td>
-   <td style="text-align:right;"> 9 (13.4) </td>
-   <td style="text-align:right;"> 16 (12.2) </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;">  </td>
-   <td style="text-align:right;">  </td>
-   <td style="text-align:left;"> th001 </td>
-   <td style="text-align:right;"> 52 (81.2) </td>
-   <td style="text-align:right;"> 54 (80.6) </td>
-   <td style="text-align:right;"> 106 (80.9) </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;">  </td>
-   <td style="text-align:right;">  </td>
-   <td style="text-align:left;"> th057 </td>
-   <td style="text-align:right;"> 3 (4.7) </td>
-   <td style="text-align:right;"> 2 (3.0) </td>
-   <td style="text-align:right;"> 5 (3.8) </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;">  </td>
-   <td style="text-align:right;">  </td>
-   <td style="text-align:left;"> th058 </td>
-   <td style="text-align:right;"> 2 (3.1) </td>
-   <td style="text-align:right;"> 2 (3.0) </td>
-   <td style="text-align:right;"> 4 (3.1) </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> Age </td>
-   <td style="text-align:right;"> 131 (100.0) </td>
-   <td style="text-align:left;"> Mean (SD) </td>
-   <td style="text-align:right;"> 30.0 (6.5) </td>
-   <td style="text-align:right;"> 30.1 (8.2) </td>
-   <td style="text-align:right;"> 30.1 (7.4) </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> BMI </td>
-   <td style="text-align:right;"> 131 (100.0) </td>
-   <td style="text-align:left;"> Mean (SD) </td>
-   <td style="text-align:right;"> 22.9 (3.8) </td>
-   <td style="text-align:right;"> 22.7 (3.1) </td>
-   <td style="text-align:right;"> 22.8 (3.4) </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> Weight </td>
-   <td style="text-align:right;"> 131 (100.0) </td>
-   <td style="text-align:left;"> Mean (SD) </td>
-   <td style="text-align:right;"> 63.3 (13.2) </td>
-   <td style="text-align:right;"> 63.9 (11.0) </td>
-   <td style="text-align:right;"> 63.6 (12.1) </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> Baseline.viral.load </td>
-   <td style="text-align:right;"> 131 (100.0) </td>
-   <td style="text-align:left;"> Mean (SD) </td>
-   <td style="text-align:right;"> 5.5 (1.2) </td>
-   <td style="text-align:right;"> 5.5 (1.1) </td>
-   <td style="text-align:right;"> 5.5 (1.2) </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> Variant </td>
-   <td style="text-align:right;"> 131 (100.0) </td>
-   <td style="text-align:left;"> Delta </td>
-   <td style="text-align:right;"> 10 (15.6) </td>
-   <td style="text-align:right;"> 10 (14.9) </td>
-   <td style="text-align:right;"> 20 (15.3) </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;">  </td>
-   <td style="text-align:right;">  </td>
-   <td style="text-align:left;"> BA.1 </td>
-   <td style="text-align:right;"> 15 (23.4) </td>
-   <td style="text-align:right;"> 19 (28.4) </td>
-   <td style="text-align:right;"> 34 (26.0) </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;">  </td>
-   <td style="text-align:right;">  </td>
-   <td style="text-align:left;"> BA.2 </td>
-   <td style="text-align:right;"> 37 (57.8) </td>
-   <td style="text-align:right;"> 38 (56.7) </td>
-   <td style="text-align:right;"> 75 (57.3) </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;">  </td>
-   <td style="text-align:right;">  </td>
-   <td style="text-align:left;"> BA.5 </td>
-   <td style="text-align:right;"> 2 (3.1) </td>
-   <td style="text-align:right;"> 0 (0.0) </td>
-   <td style="text-align:right;"> 2 (1.5) </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> Symptom_onset </td>
-   <td style="text-align:right;"> 131 (100.0) </td>
-   <td style="text-align:left;"> Mean (SD) </td>
-   <td style="text-align:right;"> 2.3 (0.7) </td>
-   <td style="text-align:right;"> 2.4 (0.8) </td>
-   <td style="text-align:right;"> 2.4 (0.7) </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> Vaccinated </td>
-   <td style="text-align:right;"> 131 (100.0) </td>
-   <td style="text-align:left;"> Yes </td>
-   <td style="text-align:right;"> 63 (98.4) </td>
-   <td style="text-align:right;"> 64 (95.5) </td>
-   <td style="text-align:right;"> 127 (96.9) </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;">  </td>
-   <td style="text-align:right;">  </td>
-   <td style="text-align:left;"> No </td>
-   <td style="text-align:right;"> 1 (1.6) </td>
-   <td style="text-align:right;"> 3 (4.5) </td>
-   <td style="text-align:right;"> 4 (3.1) </td>
-  </tr>
+<tr class="odd">
+<td style="text-align: left;">Site</td>
+<td style="text-align: right;">131 (100.0)</td>
+<td style="text-align: left;">br003</td>
+<td style="text-align: right;">7 (10.9)</td>
+<td style="text-align: right;">9 (13.4)</td>
+<td style="text-align: right;">16 (12.2)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;">th001</td>
+<td style="text-align: right;">52 (81.2)</td>
+<td style="text-align: right;">54 (80.6)</td>
+<td style="text-align: right;">106 (80.9)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;">th057</td>
+<td style="text-align: right;">3 (4.7)</td>
+<td style="text-align: right;">2 (3.0)</td>
+<td style="text-align: right;">5 (3.8)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;">th058</td>
+<td style="text-align: right;">2 (3.1)</td>
+<td style="text-align: right;">2 (3.0)</td>
+<td style="text-align: right;">4 (3.1)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Age</td>
+<td style="text-align: right;">131 (100.0)</td>
+<td style="text-align: left;">Mean (SD)</td>
+<td style="text-align: right;">30.0 (6.5)</td>
+<td style="text-align: right;">30.1 (8.2)</td>
+<td style="text-align: right;">30.1 (7.4)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BMI</td>
+<td style="text-align: right;">131 (100.0)</td>
+<td style="text-align: left;">Mean (SD)</td>
+<td style="text-align: right;">22.9 (3.8)</td>
+<td style="text-align: right;">22.7 (3.1)</td>
+<td style="text-align: right;">22.8 (3.4)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Weight</td>
+<td style="text-align: right;">131 (100.0)</td>
+<td style="text-align: left;">Mean (SD)</td>
+<td style="text-align: right;">63.3 (13.2)</td>
+<td style="text-align: right;">63.9 (11.0)</td>
+<td style="text-align: right;">63.6 (12.1)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Baseline.viral.load</td>
+<td style="text-align: right;">131 (100.0)</td>
+<td style="text-align: left;">Mean (SD)</td>
+<td style="text-align: right;">5.5 (1.2)</td>
+<td style="text-align: right;">5.5 (1.1)</td>
+<td style="text-align: right;">5.5 (1.2)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Variant</td>
+<td style="text-align: right;">131 (100.0)</td>
+<td style="text-align: left;">Delta</td>
+<td style="text-align: right;">10 (15.6)</td>
+<td style="text-align: right;">10 (14.9)</td>
+<td style="text-align: right;">20 (15.3)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;">BA.1</td>
+<td style="text-align: right;">13 (20.3)</td>
+<td style="text-align: right;">20 (29.9)</td>
+<td style="text-align: right;">33 (25.2)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;">BA.2</td>
+<td style="text-align: right;">40 (62.5)</td>
+<td style="text-align: right;">37 (55.2)</td>
+<td style="text-align: right;">77 (58.8)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;">BA.5</td>
+<td style="text-align: right;">1 (1.6)</td>
+<td style="text-align: right;">0 (0.0)</td>
+<td style="text-align: right;">1 (0.8)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Symptom_onset</td>
+<td style="text-align: right;">131 (100.0)</td>
+<td style="text-align: left;">Mean (SD)</td>
+<td style="text-align: right;">2.3 (0.7)</td>
+<td style="text-align: right;">2.4 (0.8)</td>
+<td style="text-align: right;">2.4 (0.7)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Vaccinated</td>
+<td style="text-align: right;">131 (100.0)</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: right;">63 (98.4)</td>
+<td style="text-align: right;">64 (95.5)</td>
+<td style="text-align: right;">127 (96.9)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: left;">No</td>
+<td style="text-align: right;">1 (1.6)</td>
+<td style="text-align: right;">3 (4.5)</td>
+<td style="text-align: right;">4 (3.1)</td>
+</tr>
 </tbody>
 </table>
+
 
 </div>
 </div>
@@ -450,22 +433,10 @@ check stan data formatting:</code></pre>
 <pre><code>We are running all models with 4 chains and 4000 samples for each chain, discarding 2000 for burn-in and thining every 8, thus giving a total of 1000 posterior samples per model.</code></pre>
 </div>
 </div>
-<div class="cell">
-
-</div>
-<div class="cell">
-
-</div>
 <p>main model selection</p>
-<div class="cell">
-
-</div>
 </section>
 <section id="plot-treatment-effect" class="level2">
 <h2 class="anchored" data-anchor-id="plot-treatment-effect">Plot treatment effect</h2>
-<div class="cell">
-
-</div>
 <div class="cell">
 <div class="cell-output cell-output-stderr">
 <pre><code>`summarise()` has grouped output by 'Timepoint_ID'. You can override using the
@@ -484,10 +455,6 @@ check stan data formatting:</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>The model estimated population mean clearance half-life is 25.3 (95% CI 19.2-32.7)
-The model estimated population mean beta value is -0.29 (95% CI -0.38 to -0.22)</code></pre>
-</div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -497,9 +464,7 @@ The model estimated population mean beta value is -0.29 (95% CI -0.38 to -0.22)<
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>In No study drug the median clearance half life was 18.2 (range 3.5 to 47)
-In No study drug the mean beta -0.46 (range -0.59 to -0.32)
-In Remdesivir the median clearance half life was 12.8 (range 4.8 to 51.5)
-In Remdesivir the mean beta -0.64 (range -0.81 to -0.48)</code></pre>
+In Remdesivir the median clearance half life was 12.8 (range 4.8 to 51.5)</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -515,6 +480,78 @@ The following `from` values were not present in `x`: Age_scaled, Antibody_test, 
 </div>
 </div>
 </div>
+<p>Sensitivity analysis - all 8 models</p>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Remdesivir_analysis_files/figure-html/sensitivity_analysis-1.png" class="img-fluid figure-img" width="2400"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="symptoms-and-fever-clearance" class="level2">
+<h2 class="anchored" data-anchor-id="symptoms-and-fever-clearance">Symptoms and fever clearance</h2>
+<section id="fever" class="level3">
+<h3 class="anchored" data-anchor-id="fever">Fever</h3>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 2236 Columns: 4
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (1): ID
+dbl (3): Time, ax_temperature, Fever_Baseline
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 46</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Call:
+survdiff(formula = Surv(clearance_time, clearance_time_cens) ~ 
+    Trt, data = temp_clearance)
+
+                   N Observed Expected (O-E)^2/E (O-E)^2/V
+Trt=No study drug 21       21     23.8     0.333     0.733
+Trt=Remdesivir    25       25     22.2     0.358     0.733
+
+ Chisq= 0.7  on 1 degrees of freedom, p= 0.4 </code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Remdesivir_analysis_files/figure-html/fever_clearance_curve-1.png" class="img-fluid figure-img" width="2400"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="symptoms" class="level3">
+<h3 class="anchored" data-anchor-id="symptoms">Symptoms</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Call:
+survdiff(formula = Surv(Symptom_resolution, symp_censored) ~ 
+    Trt, data = platcov_symp)
+
+                   N Observed Expected (O-E)^2/E (O-E)^2/V
+Trt=No study drug 64       47     55.8      1.39      3.78
+Trt=Remdesivir    67       53     44.2      1.76      3.78
+
+ Chisq= 3.8  on 1 degrees of freedom, p= 0.05 </code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Remdesivir_analysis_files/figure-html/symptoms_survival_curve-1.png" class="img-fluid figure-img" width="2400"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
 </section>
 <section id="individual-patient-data" class="level2">
 <h2 class="anchored" data-anchor-id="individual-patient-data">Individual patient data</h2>
@@ -614,9 +651,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
   const clipboard = new window.ClipboardJS('.code-copy-button', {
-    target: function(trigger) {
-      return trigger.previousElementSibling;
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
     }
   });
   clipboard.on('success', function(e) {
@@ -681,6 +732,92 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return note.innerHTML;
     });
   }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
   const findCites = (el) => {
     const parentEl = el.parentElement;
     if (parentEl) {

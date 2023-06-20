@@ -69,6 +69,7 @@ plot_baseline_data = function(input_data){
 
 
 
+
 plot_serial_data = function(xx, xlims=c(0,7)){
   
   daily_VL_data = xx %>% group_by(ID, Time) %>%
@@ -77,6 +78,12 @@ plot_serial_data = function(xx, xlims=c(0,7)){
   summary_VL_data = daily_VL_data %>% group_by(Timepoint_ID, Trt) %>%
     summarise(daily_VL = mean(daily_VL,na.rm = T),
               trt_color=unique(trt_color))
+  
+  summary_dat = daily_VL_data %>% ungroup() %>% distinct(ID, .keep_all = T) %>%
+    group_by(Trt) %>%
+    summarise(n = n(),
+              trt_color = unique(trt_color)) %>% ungroup() %>%
+    mutate(legend = paste0(Trt, ' (n=',n,')'))
   
   par(las=1)
   plot(summary_VL_data$Timepoint_ID, summary_VL_data$daily_VL,
@@ -99,9 +106,9 @@ plot_serial_data = function(xx, xlims=c(0,7)){
           type='b',col = summary_VL_data$trt_color[ind],lwd=3)
   }
   
-  legend('topright', col=unique(xx$trt_color), 
-         legend = unique(xx$Trt),
-         lwd=2,pch=15,cex=1, inset = 0.03)
+  legend('topright', col = summary_dat$trt_color, 
+         legend = summary_dat$legend,
+         lwd=2, pch=15, cex=1, inset = 0.03)
 }
 
 
@@ -297,9 +304,9 @@ plot_data_model_fits =
              analysis_data_stan$log_10_vl[ind],pch=16)
       
       mtext(text = paste0(ID_map$ID_key[counter],
-                          '\n',
+                          ' - ',
                           ID_map$Trt[counter]),
-            side = 3, line = 1, cex=1)
+            side = 3, line = .5, cex=.6)
       counter=counter+1
     }
     
@@ -413,15 +420,15 @@ calculate_fever_clearance = function(temp_dat,
                                      window_clear = 24/24, # look ahead window to define "fever clearance"
                                      threshold=37){
   
-  if(!'temperature_ax' %in% colnames(temp_dat)) stop('needs to contain a temperature_ax column')
+  if(!'ax_temperature' %in% colnames(temp_dat)) stop('needs to contain a ax_temperature column')
   
   temp_dat$clearance_time = NA
   # For interval censored data, the status indicator is 0=right censored, 1=event at time, 2=left censored, 3=interval censored. 
   temp_dat$clearance_time_cens = 1
   
-  temp_dat$fever_binary = temp_dat$temperature_ax>threshold
+  temp_dat$fever_binary = temp_dat$ax_temperature>threshold
   temp_dat = dplyr::arrange(temp_dat, ID, Time) 
-  temp_dat = temp_dat[!is.na(temp_dat$temperature_ax), ]
+  temp_dat = temp_dat[!is.na(temp_dat$ax_temperature), ]
   
   for(id in unique(temp_dat$ID)){
     ind = temp_dat$ID==id
@@ -457,77 +464,132 @@ calculate_fever_clearance = function(temp_dat,
 }
 
 
+# 
+# 
+# make_slopes_plot = function(stan_out, 
+#                             analysis_data_stan,
+#                             ID_map, 
+#                             data_summary,
+#                             trt_cols,
+#                             my_lims = c(5, 72), # hours
+#                             my_vals = c(7,24,48,72)){
+#   
+#   slopes = rstan::extract(stan_out, pars='slope')$slope
+#   beta_0 = rstan::extract(stan_out, pars='beta_0')$beta_0
+#   
+#   writeLines(sprintf('The model estimated population mean clearance half-life is %s (95%% CI %s-%s)',
+#                      round(mean(24*log10(0.5)/beta_0),1),
+#                      round(quantile(24*log10(0.5)/beta_0,.025),1),
+#                      round(quantile(24*log10(0.5)/beta_0,.975),1)))
+#   
+#   writeLines(sprintf('The model estimated population mean beta value is %s (95%% CI %s to %s)',
+#                      round(mean(beta_0),2),
+#                      round(quantile(beta_0,.025),2),
+#                      round(quantile(beta_0,.975),2)))
+#   
+#   
+#   t12_output = data.frame(t_12_med = 24*log10(.5)/(apply(slopes,2,mean)),
+#                           t_12_up = 24*log10(.5)/(apply(slopes,2,quantile,.9)),
+#                           t_12_low = 24*log10(.5)/(apply(slopes,2,quantile,.1)),
+#                           beta_mean = apply(slopes,2,mean),
+#                           beta_low = apply(slopes,2,quantile,.1),
+#                           beta_high = apply(slopes,2,quantile,.9),
+#                           ID_stan = analysis_data_stan$id[analysis_data_stan$ind_start])
+#   t12_output = merge(t12_output, ID_map, by = 'ID_stan')
+#   data_summary = merge(data_summary, t12_output, by.x = 'ID', by.y = 'ID_key')
+#   
+#   
+#   data_summary = dplyr::arrange(data_summary, Trt, t_12_med)
+#   
+#   par(mar=c(5,2,2,2))
+#   plot(data_summary$t_12_med, 1:nrow(data_summary),
+#        col=trt_cols[data_summary$Trt], yaxt='n', xaxt='n',
+#        xlim=my_lims, panel.first=grid(), xlab='', 
+#        pch=15, ylab='')
+#   mtext(text = expression('t'[1/2] ~ ' (hours)'),side = 1,line=3, cex=1.5)
+#   
+#   axis(1, at = my_vals,labels = my_vals)
+#   
+#   
+#   for(i in 1:nrow(data_summary)){
+#     lines(c(data_summary$t_12_low[i],
+#             data_summary$t_12_up[i]),
+#           rep(i,2),col=trt_cols[data_summary$Trt[i]])
+#   }
+#   
+#   for(trt in unique(data_summary$Trt)){
+#     ind = data_summary$Trt==trt
+#     writeLines(sprintf('In %s the median clearance half life was %s (range %s to %s)',
+#                        trt,
+#                        round(median(data_summary$t_12_med[ind]),1),
+#                        round(min(data_summary$t_12_med[ind]),1),
+#                        round(max(data_summary$t_12_med[ind]),1)))
+#     
+#     writeLines(sprintf('In %s the mean beta %s (range %s to %s)',
+#                        trt,
+#                        round(mean(data_summary$beta_mean[ind]),2),
+#                        round(mean(data_summary$beta_low[ind]),2),
+#                        round(mean(data_summary$beta_high[ind]),2)))
+#     
+#     abline(v = median(data_summary$t_12_med[ind]), col=trt_cols[trt],lty=2,lwd=2)
+#   }
+#   
+#   legend('bottomright', legend = names(trt_cols),
+#          col = trt_cols,
+#          pch=15,lwd=2,inset=0.03)
+#   return(data_summary)
+# }
+
+
 
 make_slopes_plot = function(stan_out, 
                             analysis_data_stan,
                             ID_map, 
                             data_summary,
-                            trt_cols,
                             my_lims = c(5, 72), # hours
                             my_vals = c(7,24,48,72)){
   
   slopes = rstan::extract(stan_out, pars='slope')$slope
-  beta_0 = rstan::extract(stan_out, pars='beta_0')$beta_0
   
-  writeLines(sprintf('The model estimated population mean clearance half-life is %s (95%% CI %s-%s)',
-                     round(mean(24*log10(0.5)/beta_0),1),
-                     round(quantile(24*log10(0.5)/beta_0,.025),1),
-                     round(quantile(24*log10(0.5)/beta_0,.975),1)))
-  
-  writeLines(sprintf('The model estimated population mean beta value is %s (95%% CI %s to %s)',
-                     round(mean(beta_0),2),
-                     round(quantile(beta_0,.025),2),
-                     round(quantile(beta_0,.975),2)))
-  
-  
-  t12_output = data.frame(t_12_med = 24*log10(.5)/(apply(slopes,2,mean)),
-                          t_12_up = 24*log10(.5)/(apply(slopes,2,quantile,.9)),
-                          t_12_low = 24*log10(.5)/(apply(slopes,2,quantile,.1)),
-                          beta_mean = apply(slopes,2,mean),
-                          beta_low = apply(slopes,2,quantile,.1),
-                          beta_high = apply(slopes,2,quantile,.9),
+  t12_output = data.frame(t_12_med = 24*log10(.5)/apply(slopes,2,mean),
+                          t_12_up = 24*log10(.5)/apply(slopes,2,quantile,.9),
+                          t_12_low = 24*log10(.5)/apply(slopes,2,quantile,.1),
+                          slope_median = apply(slopes,2,median),
                           ID_stan = analysis_data_stan$id[analysis_data_stan$ind_start])
   t12_output = merge(t12_output, ID_map, by = 'ID_stan')
   data_summary = merge(data_summary, t12_output, by.x = 'ID', by.y = 'ID_key')
-  
   
   data_summary = dplyr::arrange(data_summary, Trt, t_12_med)
   
   par(mar=c(5,2,2,2))
   plot(data_summary$t_12_med, 1:nrow(data_summary),
-       col=trt_cols[data_summary$Trt], yaxt='n', xaxt='n',
+       yaxt='n', xaxt='n',
        xlim=my_lims, panel.first=grid(), xlab='', 
-       pch=15, ylab='')
-  mtext(text = expression('t'[1/2] ~ ' (hours)'),side = 1,line=3, cex=1.5)
-  
+       pch=15, ylab='', col=data_summary$trt_color)
+  mtext(text = expression('t'[1/2] ~ ' (hours)'),side = 1,line=3)
   axis(1, at = my_vals,labels = my_vals)
-  
   
   for(i in 1:nrow(data_summary)){
     lines(c(data_summary$t_12_low[i],
             data_summary$t_12_up[i]),
-          rep(i,2),col=trt_cols[data_summary$Trt[i]])
+          rep(i,2),
+          col=adjustcolor(data_summary$trt_color[i],alpha.f = .5))
   }
   
-  for(trt in unique(data_summary$Trt)){
-    ind = data_summary$Trt==trt
+  for(kk in which(!duplicated(data_summary$Trt))){
+    ind = data_summary$Trt==data_summary$Trt[kk]
     writeLines(sprintf('In %s the median clearance half life was %s (range %s to %s)',
-                       trt,
+                       data_summary$Trt[kk],
                        round(median(data_summary$t_12_med[ind]),1),
                        round(min(data_summary$t_12_med[ind]),1),
                        round(max(data_summary$t_12_med[ind]),1)))
-    
-    writeLines(sprintf('In %s the mean beta %s (range %s to %s)',
-                       trt,
-                       round(mean(data_summary$beta_mean[ind]),2),
-                       round(mean(data_summary$beta_low[ind]),2),
-                       round(mean(data_summary$beta_high[ind]),2)))
-    
-    abline(v = median(data_summary$t_12_med[ind]), col=trt_cols[trt],lty=2,lwd=2)
+    abline(v = median(data_summary$t_12_med[ind]), col=data_summary$trt_color[kk],lty=2,lwd=2)
   }
   
-  legend('bottomright', legend = names(trt_cols),
-         col = trt_cols,
+  
+  legend('bottomright', 
+         legend = rev(unique(data_summary$Trt)),
+         col = rev(unique(data_summary$trt_color)),
          pch=15,lwd=2,inset=0.03)
   return(data_summary)
 }
@@ -570,8 +632,8 @@ get_itt_population = function(){
 
 
 
-get_trt_colors = function(plot_cols=F){
-  trt_cols = array(dim = 11)
+get_trt_colors = function(){
+  trt_cols = array(dim = 12)
   names(trt_cols) = 
     c("Ivermectin",
       "Regeneron",
@@ -583,7 +645,8 @@ get_trt_colors = function(plot_cols=F){
       "Molnupiravir",
       "Nirmatrelvir + Ritonavir",
       "Evusheld",
-      'Ensitrelvir')
+      'Ensitrelvir',
+      "Nirmatrelvir")
   trt_cols['No study drug'] = viridis::viridis(n = 10)[8]
   trt_cols['Fluoxetine'] = viridis::viridis(n = 10)[5]
   trt_cols['Nitazoxanide'] = viridis::magma(n = 10)[8]
@@ -591,20 +654,14 @@ get_trt_colors = function(plot_cols=F){
   trt_cols['Favipiravir'] = viridis::plasma(n = 100)[92]
   trt_cols['Ivermectin'] = viridis::plasma(n = 10)[4]
   trt_cols['Nirmatrelvir + Ritonavir'] = viridis::plasma(n = 10)[1]
+  trt_cols['Nirmatrelvir'] = viridis::plasma(n = 10)[1]
   trt_cols['Regeneron'] = viridis::inferno(n = 10)[5]
   trt_cols['Molnupiravir'] = viridis::inferno(n = 10)[7]
   trt_cols['Remdesivir'] = RColorBrewer::brewer.pal('Dark2',n=8)[8]
   trt_cols['Ensitrelvir'] = RColorBrewer::brewer.pal('Set1',n=8)[1]
   
-  if(plot_cols){
-    my_labels = gsub(pattern = ' + Ritonavir',replacement = '',fixed = T,x = names(trt_cols))
-    plot(1:length(trt_cols), col=trt_cols, pch=16, cex=5, xlim = c(1,15),
-         xaxt='n',yaxt='n',xlab='',ylab='',bty='n')
-    text(x = 1:length(trt_cols)+2.5, y= 1:length(trt_cols), labels = my_labels)
-  }
   return(trt_cols)
 }
-
 
 
 checkStrict(make_stan_inputs)
